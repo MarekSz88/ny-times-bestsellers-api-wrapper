@@ -1,0 +1,49 @@
+services:
+    mariadb-book:
+        image: 'mariadb:11.0'
+        working_dir: /application
+        volumes:
+            - '.:/application'
+        environment:
+            - MYSQL_ROOT_PASSWORD=book
+            - MYSQL_DATABASE=api_book
+            - MYSQL_USER=book
+            - MYSQL_PASSWORD=book
+        ports:
+            - '16002:3306'
+        networks:
+          - book_default
+    webserver-book:
+        image: 'nginx:alpine'
+        working_dir: /application
+        volumes:
+            - '.:/application'
+            - './docker/php-fpm/php-ini-overrides.ini:/usr/local/etc/php/conf.d/99-overrides.ini'
+            - './docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf'
+        ports:
+            - '17002:80'
+        networks:
+          - book_default
+    redis:
+        image: 'redis:alpine'
+        volumes:
+          - '.:/application'
+        ports:
+          - '18002:6379'
+        networks:
+          - book_default
+
+    book:
+        build: .
+        working_dir: /application
+        volumes:
+            - '.:/application'
+            - './docker/php-fpm/php-ini-overrides.ini:/usr/local/etc/php/conf.d/99-overrides.ini'
+        links:
+          - mariadb-book
+        networks:
+          - book_default
+
+networks:
+  book_default:
+    driver: bridge
