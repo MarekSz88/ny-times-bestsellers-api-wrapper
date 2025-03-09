@@ -4,6 +4,7 @@ namespace Tests\Mock;
 
 use App\Http\Requests\BestSellersSearchRequest;
 use App\Services\BestSellersService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class BestSellersMock extends BestSellersService

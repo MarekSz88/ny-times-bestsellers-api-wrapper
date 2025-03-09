@@ -5,21 +5,26 @@ namespace App\Services;
 use App\Exceptions\NYTimesAPIException;
 use App\Http\Requests\BestSellersSearchRequest;
 use App\Services\Interfaces\BestSellers;
+use Exception;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class BestSellersService implements BestSellers
 {
+    protected const int RESPONSE_CACHE_TTL = 600;
     private const string BESTSELLERS_HISTORY_URL = 'https://api.nytimes.com/svc/books/v3/lists/best-sellers/history.json';
 
     public function search(BestSellersSearchRequest $request): array
     {
         try {
-            $response = $this->getBestSellersDataFromNYTimesAPI($this->buildTargetUrl($request));
-            return $response;
-        } catch (NYTimesAPIException $exception) {
-            $this->abortNicely($exception);
-        } catch (\Exception $exception) {
+            $targetUrl = $this->buildTargetUrl($request);
+            return Cache::remember($this->getCacheKey($targetUrl),
+                self::RESPONSE_CACHE_TTL,
+                function () use ($targetUrl) {
+                    return $this->getBestSellersDataFromNYTimesAPI($targetUrl);
+                });
+        } catch (NYTimesAPIException|Exception $exception) {
             $this->abortNicely($exception);
         }
     }
@@ -29,12 +34,17 @@ class BestSellersService implements BestSellers
         return sprintf("%s?%s&%s",
             self::BESTSELLERS_HISTORY_URL,
             'api-key=' . config('bestseller.new_york_times_books_public_key'),
-            join('&', $request->all())
+            http_build_query($request->all())
         );
     }
 
-    /*
-     * @throws \ConnectionException
+    private function getCacheKey(string $targetUrl): string
+    {
+        return md5($targetUrl);
+    }
+
+    /**
+     * @throws ConnectionException
      */
     private function getBestSellersDataFromNYTimesAPI(string $targetUrl): array
     {
@@ -53,9 +63,9 @@ class BestSellersService implements BestSellers
         }
     }
 
-    private function handleResponseData(Response $response): void
+    private function handleResponseData(Response $response): array
     {
-        dd($response->json());
+        return $response->json();
     }
 
     private function abortNicely(mixed $exception): void

@@ -13,24 +13,28 @@ class BestSellersTest extends TestCase
 {
     public function test_search_success(): void
     {
-        $request = new BestSellersSearchRequest();
-
-        $this->get(route('best-sellers.index'), $request->toArray())
+        $this->get(route('best-sellers.index'))
             ->assertJsonStructure(['status', 'copyright', 'results', 'num_results']);
+    }
+
+    public function test_search_fail_unexpected_param(): void
+    {
+        $this->get(route('best-sellers.index', ['wrong_param' => 'bang!']))
+            ->assertSeeText('The  unexpected field must be true or false.');
     }
 
     public function test_search_connection_exception(): void
     {
-        $handler = $this->prepareMockForException(new Exception());
+        $mockService = $this->prepareMockForException(new Exception());
 
         $this->expectException(Exception::class);
 
-        $handler->search(new BestSellersSearchRequest());
+        $mockService->search(new BestSellersSearchRequest());
     }
 
     public function test_search_ny_times_api_exception(): void
     {
-        $handler = $this->prepareMockForException(
+        $mockService = $this->prepareMockForException(
             new NYTimesAPIException(
                 'API error',
                 500,
@@ -40,16 +44,16 @@ class BestSellersTest extends TestCase
 
         $this->expectException(NYTimesAPIException::class);
 
-        $handler->search(new BestSellersSearchRequest());
+        $mockService->search(new BestSellersSearchRequest());
     }
 
     private function prepareMockForException(Exception|NYTimesAPIException $exception): MockObject
     {
-        $handler = $this->getMockBuilder(BestSellersService::class)
+        $mockService = $this->getMockBuilder(BestSellersService::class)
             ->onlyMethods(['search'])->getMock();
-        $handler->expects($this->once())
+        $mockService->expects($this->once())
             ->method('search')
             ->willThrowException($exception);
-        return $handler;
+        return $mockService;
     }
 }

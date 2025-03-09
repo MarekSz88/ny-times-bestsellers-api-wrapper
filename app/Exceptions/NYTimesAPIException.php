@@ -10,8 +10,19 @@ class NYTimesAPIException extends Exception
     {
         $message = sprintf("%s. Response: %s",
             $message,
-            $jsonResponse['fault']['faultstring'] ?? 'No details available'
+            $this->parseResponsesFromNYTimes($jsonResponse)
         );
         parent::__construct($message, $code);
+    }
+
+    private function parseResponsesFromNYTimes(array $jsonResponse): string
+    {
+        if (!empty($jsonResponse['errors'])) {
+            return join('. ', $jsonResponse['errors']);
+        } elseif (!empty($jsonResponse['fault']['faultstring'])) {
+            return $jsonResponse['fault']['faultstring'];
+        } else {
+            return 'No details available';
+        }
     }
 }
