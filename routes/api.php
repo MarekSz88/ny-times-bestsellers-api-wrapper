@@ -16,7 +16,7 @@ Route::get('/best-sellers', [BestSellersController::class, 'index'])
     by default we should always serve latest API version
     however assuming application grows and we need to introduce breaking changes
     we can open new endpoint for previous version.
-    Preferably serving only old version of those urls which respoonse has changed to reduce complexity
+    Preferably serving only old version of those urls which response has changed to reduce complexity
     and maintainability of the code.
 */
 
