@@ -23,4 +23,3 @@ Route::get('/best-sellers', [BestSellersController::class, 'index'])
 Route::prefix('v1')->group(function () {
     Route::get('/best-sellers', [BestSellersController::class, 'v1_index']);
 });
-

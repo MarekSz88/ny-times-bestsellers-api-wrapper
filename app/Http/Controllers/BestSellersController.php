@@ -8,13 +8,11 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-
 class BestSellersController extends Controller
 {
     public function __construct(
         private readonly BestSellers $bestSellers
-    )
-    {
+    ) {
     }
 
     public function index(BestSellersSearchRequest $request): JsonResponse

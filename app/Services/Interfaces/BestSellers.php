@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Interfaces;
+
 use App\Http\Requests\BestSellersSearchRequest;
 
 interface BestSellers

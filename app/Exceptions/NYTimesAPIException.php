@@ -8,7 +8,8 @@ class NYTimesAPIException extends Exception
 {
     public function __construct(string $message, int $code, array $jsonResponse = [])
     {
-        $message = sprintf("%s. Response: %s",
+        $message = sprintf(
+            "%s. Response: %s",
             $message,
             $this->parseResponsesFromNYTimes($jsonResponse)
         );

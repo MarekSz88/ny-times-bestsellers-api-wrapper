@@ -19,11 +19,13 @@ class NYTimesAPIBestSellersService implements BestSellers
     {
         try {
             $targetUrl = $this->buildTargetUrl($request);
-            return Cache::remember($this->getCacheKey($targetUrl),
+            return Cache::remember(
+                $this->getCacheKey($targetUrl),
                 self::RESPONSE_CACHE_TTL,
                 function () use ($targetUrl) {
                     return $this->getBestSellersDataFromNYTimesAPI($targetUrl);
-                });
+                }
+            );
         } catch (NYTimesAPIException|Exception $exception) {
             $this->abortNicely($exception);
         }
@@ -31,7 +33,8 @@ class NYTimesAPIBestSellersService implements BestSellers
 
     private function buildTargetUrl(BestSellersSearchRequest $request): string
     {
-        return sprintf("%s?%s&%s",
+        return sprintf(
+            "%s?%s&%s",
             self::BESTSELLERS_HISTORY_URL,
             'api-key=' . config('bestseller.new_york_times_books_public_key'),
             http_build_query($request->all())
