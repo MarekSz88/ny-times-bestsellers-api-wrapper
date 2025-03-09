@@ -10,7 +10,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-class BestSellersService implements BestSellers
+class NYTimesAPIBestSellersService implements BestSellers
 {
     protected const int RESPONSE_CACHE_TTL = 600;
     private const string BESTSELLERS_HISTORY_URL = 'https://api.nytimes.com/svc/books/v3/lists/best-sellers/history.json';

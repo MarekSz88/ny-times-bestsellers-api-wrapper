@@ -1,28 +1,16 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use App\Exceptions\NYTimesAPIException;
 use App\Http\Requests\BestSellersSearchRequest;
-use App\Services\BestSellersService;
+use App\Services\NYTimesAPIBestSellersService;
 use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
-class BestSellersTest extends TestCase
+class NYTimesAPIBestSellersServiceTest extends TestCase
 {
-    public function test_search_success(): void
-    {
-        $this->get(route('best-sellers.index'))
-            ->assertJsonStructure(['status', 'copyright', 'results', 'num_results']);
-    }
-
-    public function test_search_fail_unexpected_param(): void
-    {
-        $this->get(route('best-sellers.index', ['wrong_param' => 'bang!']))
-            ->assertSeeText('The  unexpected field must be true or false.');
-    }
-
     public function test_search_connection_exception(): void
     {
         $mockService = $this->prepareMockForException(new Exception());
@@ -49,7 +37,7 @@ class BestSellersTest extends TestCase
 
     private function prepareMockForException(Exception|NYTimesAPIException $exception): MockObject
     {
-        $mockService = $this->getMockBuilder(BestSellersService::class)
+        $mockService = $this->getMockBuilder(NYTimesAPIBestSellersService::class)
             ->onlyMethods(['search'])->getMock();
         $mockService->expects($this->once())
             ->method('search')

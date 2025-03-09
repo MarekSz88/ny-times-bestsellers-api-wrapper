@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\BestSellersService;
 use App\Services\Interfaces\BestSellers;
+use App\Services\NYTimesAPIBestSellersService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(BestSellers::class, BestSellersService::class);
+        $this->app->bind(BestSellers::class, NYTimesAPIBestSellersService::class);
     }
 
     /**

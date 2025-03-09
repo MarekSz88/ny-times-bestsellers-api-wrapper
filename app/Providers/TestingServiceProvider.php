@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Services\Interfaces\BestSellers;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use Tests\Mock\BestSellersMock;
+use Tests\Mock\NYTimesAPIBestSellersServiceMock;
 
 class TestingServiceProvider extends ServiceProvider
 {
@@ -13,7 +13,7 @@ class TestingServiceProvider extends ServiceProvider
     {
         if (app()->environment('testing')) {
             $this->app->bind(BestSellers::class, function (Application $app) {
-                return new BestSellersMock();
+                return new NYTimesAPIBestSellersServiceMock();
             });
         }
     }
